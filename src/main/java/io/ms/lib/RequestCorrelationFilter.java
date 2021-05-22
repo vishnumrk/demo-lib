@@ -55,13 +55,15 @@ public class RequestCorrelationFilter implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        response.setHeader("traceId", MDC.get(loggerMdcName));
+        response.setHeader("traceId", RequestCorrelationContext.getCurrent().getCorrelationId());
         MDC.remove(loggerMdcName);
         RequestCorrelationContext.clearCurrent();
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-
+        response.setHeader("traceId", RequestCorrelationContext.getCurrent().getCorrelationId());
+        MDC.remove(loggerMdcName);
+        RequestCorrelationContext.clearCurrent();
     }
 }
