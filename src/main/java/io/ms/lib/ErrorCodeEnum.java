@@ -1,0 +1,22 @@
+package io.ms.lib;
+
+public enum ErrorCodeEnum implements ErrorCode {
+    INVALID_ARGUMENT,
+    FAILED_PRECONDITION,
+    OUT_OF_RANGE,
+    UNAUTHENTICATED,
+    PERMISSION_DENIED,
+    NOT_FOUND,
+    ABORTED,
+    ALREADY_EXISTS,
+    RESOURCE_EXHAUSTED,
+    CANCELLED,
+    DATA_LOSS,
+    UNKNOWN,
+    NOT_IMPLEMENTED,
+    UNAVAILABLE,
+    DEADLINE_EXCEEDED,
+    INTERNAL,
+    BAD_REQUEST;
+
+}
