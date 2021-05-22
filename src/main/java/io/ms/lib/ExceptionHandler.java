@@ -84,7 +84,7 @@ public class ExceptionHandler {
         Error errorResponse = new Error();
         errorResponse.setCode(ex.getCode());
         errorResponse.setMessage(messageSource.getMessage(ex.getCode().name(), null, Locale.US));
-        return new ResponseEntity<Object>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({Exception.class})
@@ -94,6 +94,6 @@ public class ExceptionHandler {
         Error errorResponse = new Error();
         errorResponse.setCode(ErrorCodeEnum.INTERNAL);
         errorResponse.setMessage(messageSource.getMessage(ErrorCodeEnum.INTERNAL.name(), null, Locale.US));
-        return new ResponseEntity<Object>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
