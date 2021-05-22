@@ -1,9 +1,7 @@
 package io.ms.lib;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -24,8 +22,16 @@ public class DemoController {
         System.out.println(parse);
     }
 
+    @PostMapping("/demo")
+    public ResponseEntity<String> demo(@RequestBody @Valid Demo demo){
+        System.out.println(demo);
+        throwException();
+        parseDate("");
+        return ResponseEntity.ok("Hello World");
+    }
+
 
     private void throwException() {
-        if (true) throw new ApplicationException(ErrorCodeEnum.BAD_REQUEST);
+        if (true) throw new ApplicationException(ErrorCodeEnum.FAILED_PRECONDITION, new Exception("Invalid parameter")).addContextValue("user-id", "123");
     }
 }

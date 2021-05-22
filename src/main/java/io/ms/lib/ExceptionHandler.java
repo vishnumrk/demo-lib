@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -33,6 +34,26 @@ public class ExceptionHandler {
         errorResponse.setCode(ErrorCodeEnum.INVALID_ARGUMENT);
         errorResponse.setTarget(ex.getParameterName());
         log.error(ex.getParameterType());
+        errorResponse.setMessage(messageSource.getMessage(ErrorCodeEnum.INVALID_ARGUMENT.name(), new Object[]{ex.getParameterName(), ex.getParameterType()}, Locale.US));
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler({MethodArgumentNotValidException.class})
+    public final ResponseEntity<Object> handleException(MethodArgumentNotValidException ex, WebRequest request) throws Exception {
+        log.error(ex.getMessage(),ex);
+        Error errorResponse = new Error();
+        errorResponse.setCode(ErrorCodeEnum.FAILED_PRECONDITION);
+        errorResponse.setTarget(ex.getParameter().getParameterName());
+        errorResponse.setMessage(messageSource.getMessage(ErrorCodeEnum.FAILED_PRECONDITION.name(), null, Locale.US));
+        List<Error> errorList = ex.getFieldErrors().stream().map(fieldError -> {
+            Error error = new Error();
+            error.setCode(ErrorCodeEnum.FAILED_PRECONDITION);
+            error.setMessage(fieldError.getDefaultMessage());
+            error.setTarget(fieldError.getField());
+            return error;
+        }).collect(Collectors.toList());
+        errorResponse.setDetails(errorList);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -40,11 +61,11 @@ public class ExceptionHandler {
     public final ResponseEntity<Object> handleException(ConstraintViolationException ex, WebRequest request) throws Exception {
         log.error(ex.getMessage(),ex);
         Error errorResponse = new Error();
-        errorResponse.setCode(ErrorCodeEnum.BAD_REQUEST);
+        errorResponse.setCode(ErrorCodeEnum.FAILED_PRECONDITION);
 
         List<Error> errorList = ex.getConstraintViolations().stream().map(constraintViolation -> {
             Error error = new Error();
-            error.setCode(ErrorCodeEnum.BAD_REQUEST);
+            error.setCode(ErrorCodeEnum.FAILED_PRECONDITION);
             error.setMessage(constraintViolation.getMessage());
             error.setTarget(constraintViolation.getPropertyPath().toString());
             return error;

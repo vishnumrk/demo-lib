@@ -1,8 +1,9 @@
 package io.ms.lib;
 
-public class ApplicationException extends RuntimeException {
+public class ApplicationException extends ContextedRuntimeException {
 
     private ErrorCode code;
+    private Object[] params;
     private Throwable cause;
 
     public ApplicationException(Exception ex) {
@@ -10,34 +11,23 @@ public class ApplicationException extends RuntimeException {
         this.cause = ex;
     }
 
-    public ApplicationException(ErrorCode code) {
-        this.code = code;
-    }
-
-    public ApplicationException(Exception ex, String message, ErrorCode code) {
-        super(message);
-        this.code = code;
-        this.cause=  ex;
-    }
-
-    public ApplicationException(String message, Throwable cause, ErrorCode code) {
-        super(message, cause);
-        this.code = code;
-        this.cause = cause;
-    }
-
-    public ApplicationException(Throwable cause, ErrorCode code) {
+    public ApplicationException(ErrorCode code, Throwable cause) {
         super(cause);
         this.code = code;
         this.cause = cause;
-
     }
 
-    public ApplicationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, ErrorCode code) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public ApplicationException(ErrorCode code, Throwable cause, Object... params) {
         this.code = code;
         this.cause = cause;
+        this.params = params;
+    }
 
+    public ApplicationException(ErrorCode code, Exception ex, String message, Object... params) {
+        super(message);
+        this.code = code;
+        this.cause=  ex;
+        this.params = params;
     }
 
     public ErrorCode getCode() {

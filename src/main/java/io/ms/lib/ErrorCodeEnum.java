@@ -16,7 +16,6 @@ public enum ErrorCodeEnum implements ErrorCode {
     NOT_IMPLEMENTED,
     UNAVAILABLE,
     DEADLINE_EXCEEDED,
-    INTERNAL,
-    BAD_REQUEST;
+    INTERNAL;
 
 }
