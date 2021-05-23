@@ -2,6 +2,9 @@ spring:
   application:
     name: Demo Application
 
-logging.level: error
-logging.level.io.ms.lib: info
-logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+logging:
+  level:
+    io.ms.lib: DEBUG
+    springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+    org.springframework.boot: INFO
+    org.springframework.cloud: INFO

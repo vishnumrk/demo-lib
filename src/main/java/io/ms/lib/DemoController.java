@@ -12,8 +12,8 @@ public class DemoController {
 
     @GetMapping("/demo")
     public ResponseEntity<String> demo(@RequestParam @Valid @NotEmpty String date){
+        parseDate(date);
         throwException();
-        parseDate("");
         return ResponseEntity.ok("Hello World");
     }
 

@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
 @RestControllerAdvice
 public class ExceptionHandler {
 
@@ -80,6 +82,7 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler({ApplicationException.class})
     public final ResponseEntity<Object> handleException(ApplicationException ex, WebRequest request) throws Exception {
         log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(), kv("exceptionContext", ex.getExceptionContext()));
 
         Error errorResponse = new Error();
         errorResponse.setCode(ex.getCode());
