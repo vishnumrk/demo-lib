@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ExceptionHandler {
 
-    private static Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
 
     private MessageSource messageSource;
 
@@ -89,7 +89,7 @@ public class ExceptionHandler {
 
     @org.springframework.web.bind.annotation.ExceptionHandler({Exception.class})
     public final ResponseEntity<Object> handleException(Exception ex, WebRequest request) throws Exception {
-        log.error(ex.getMessage(),ex);
+        log.error(ex.getMessage(), ex);
 
         Error errorResponse = new Error();
         errorResponse.setCode(ErrorCodeEnum.INTERNAL);

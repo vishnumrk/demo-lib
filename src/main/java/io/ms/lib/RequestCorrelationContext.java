@@ -2,8 +2,7 @@ package io.ms.lib;
 
 public class RequestCorrelationContext {
 	
-	private static final ThreadLocal<RequestCorrelationContext> CONTEXT = 
-			new ThreadLocal<RequestCorrelationContext>();
+	private static final ThreadLocal<RequestCorrelationContext> CONTEXT = new ThreadLocal<>();
 	
 	private String correlationId;
 	
