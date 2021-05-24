@@ -17,8 +17,8 @@ public class RequestCorrelationFilter implements HandlerInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestCorrelationFilter.class);
 
-    private static final String DEFAULT_CORRELATION_ID_HEADER_NAME = "requestId";
-    private static final String DEFAULT_LOGGER_MDC_NAME = "requestId";
+    private static final String DEFAULT_CORRELATION_ID_HEADER_NAME = "correlationId";
+    private static final String DEFAULT_LOGGER_MDC_NAME = "correlationId";
 
 
     @Override
