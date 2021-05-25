@@ -1,24 +1,17 @@
 package io.ms.lib.todo;
 
-import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.http.client.reactive.ClientHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.BodyExtractor;
 import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.util.concurrent.CompletableFuture;
 
 import static net.logstash.logback.argument.StructuredArguments.kv;
 
@@ -53,11 +46,20 @@ public class WebClientConfig {
     private static ExchangeFilterFunction logResponse() {
         return ExchangeFilterFunction.ofResponseProcessor(clientResponse -> {
             log.info("Response Headers : ", kv("headers", clientResponse.headers()));
-            Flux<DataBuffer> dataBufferFlux = clientResponse.body(BodyExtractors.toDataBuffers());
-            ClientResponse build = ClientResponse.create(clientResponse.statusCode())
-                    .body(dataBufferFlux)
-                    .build();
-            return Mono.just(clientResponse);
+
+            final CompletableFuture<ClientResponse> future = new CompletableFuture<>();
+            clientResponse.body(BodyExtractors.toMono(String.class))
+                    .subscribeOn(Schedulers.boundedElastic())
+                    .doOnNext(s -> log.info("Response Body : ", kv("payload", s)))
+                    .subscribe(s -> {
+                        final ClientResponse response = ClientResponse.create(clientResponse.statusCode())
+                                .body(s)
+                                .headers(httpHeaders -> httpHeaders.addAll(clientResponse.headers().asHttpHeaders()))
+                                .build();
+                        future.complete(response);
+                    });
+
+            return Mono.fromFuture(future);
         });
     }
 
